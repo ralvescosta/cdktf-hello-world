@@ -8,8 +8,8 @@ import (
 )
 
 func NewVpc(cfgs *configs.Configs, tfStack cdktf.TerraformStack) (fnaVpc vpc.Vpc) {
-	fnaVpc = vpc.NewVpc(tfStack, jsii.String("fna-vpc"), &vpc.VpcConfig{
-		CidrBlock: jsii.Sprintf("10.0.0.0/16"),
+	fnaVpc = vpc.NewVpc(tfStack, jsii.String(cfgs.Vpc.Name), &vpc.VpcConfig{
+		CidrBlock: jsii.Sprintf(cfgs.Vpc.CidrBlock),
 	})
 
 	return

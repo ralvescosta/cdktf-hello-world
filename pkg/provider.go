@@ -10,18 +10,18 @@ import (
 func NewAWSScopeProvider(cfgs *configs.Configs) (cdktf.App, cdktf.TerraformStack) {
 	appScope := cdktf.NewApp(nil)
 
-	tfScope := cdktf.NewTerraformStack(appScope, jsii.String(cfgs.AppId))
+	tfScope := cdktf.NewTerraformStack(appScope, jsii.String(cfgs.Provider.AppId))
 
 	awsprovider.NewAwsProvider(tfScope, jsii.String("AWS"), &awsprovider.AwsProviderConfig{
-		Region:    jsii.String(cfgs.Region),
-		AccessKey: jsii.String(cfgs.AccessKey),
-		SecretKey: jsii.String(cfgs.SecretKey),
+		Region:    jsii.String(cfgs.Provider.Region),
+		AccessKey: jsii.String(cfgs.Provider.AccessKey),
+		SecretKey: jsii.String(cfgs.Provider.SecretKey),
 	})
 
 	cdktf.NewCloudBackend(tfScope, &cdktf.CloudBackendConfig{
-		Hostname:     jsii.String("app.terraform.io"),
-		Organization: jsii.String("ralvescostait"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String(cfgs.AppId)),
+		Hostname:     jsii.String(cfgs.Provider.CloudBackendHostname),
+		Organization: jsii.String(cfgs.Provider.CloudBackendOrganization),
+		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String(cfgs.Provider.AppId)),
 	})
 
 	return appScope, tfScope

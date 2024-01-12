@@ -9,7 +9,7 @@ import (
 )
 
 func NewInternetGateway(cfgs *configs.Configs, tfStack cdktf.TerraformStack, fnaVpc vpc.Vpc) (igw internetgateway.InternetGateway) {
-	igw = internetgateway.NewInternetGateway(tfStack, jsii.String("fna-igw"), &internetgateway.InternetGatewayConfig{
+	igw = internetgateway.NewInternetGateway(tfStack, jsii.String(cfgs.InternetGateway.Name), &internetgateway.InternetGatewayConfig{
 		VpcId: fnaVpc.Id(),
 	})
 

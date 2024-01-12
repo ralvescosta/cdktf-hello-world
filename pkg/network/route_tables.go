@@ -21,11 +21,11 @@ func NewRouteTables(
 	publicA subnet.Subnet,
 	publicB subnet.Subnet,
 ) (privateRouteTable routetable.RouteTable, publicRouteTable routetable.RouteTable) {
-	privateRouteTable = routetable.NewRouteTable(tfStack, jsii.String("fna-private-rt"), &routetable.RouteTableConfig{
+	privateRouteTable = routetable.NewRouteTable(tfStack, jsii.String(cfgs.PrivateRouteTable.Name), &routetable.RouteTableConfig{
 		VpcId: fnaVpc.Id(),
 	})
 
-	publicRouteTable = routetable.NewRouteTable(tfStack, jsii.String("fna-public-rt"), &routetable.RouteTableConfig{
+	publicRouteTable = routetable.NewRouteTable(tfStack, jsii.String(cfgs.PublicRouteTable.Name), &routetable.RouteTableConfig{
 		VpcId: fnaVpc.Id(),
 		Route: []*routetable.RouteTableRoute{
 			{
@@ -35,20 +35,20 @@ func NewRouteTables(
 		},
 	})
 
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String("fna-private-rt-a"), &routetableassociation.RouteTableAssociationConfig{
+	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PrivateRouteTable.SubnetAssociationNames[0]), &routetableassociation.RouteTableAssociationConfig{
 		RouteTableId: privateRouteTable.Id(),
 		SubnetId:     privateA.Id(),
 	})
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String("fna-private-rt-b"), &routetableassociation.RouteTableAssociationConfig{
+	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PrivateRouteTable.SubnetAssociationNames[1]), &routetableassociation.RouteTableAssociationConfig{
 		RouteTableId: privateRouteTable.Id(),
 		SubnetId:     privateB.Id(),
 	})
 
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String("fna-public-rt-a"), &routetableassociation.RouteTableAssociationConfig{
+	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PublicRouteTable.SubnetAssociationNames[0]), &routetableassociation.RouteTableAssociationConfig{
 		RouteTableId: publicRouteTable.Id(),
 		SubnetId:     publicA.Id(),
 	})
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String("fna-public-rt-b"), &routetableassociation.RouteTableAssociationConfig{
+	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PublicRouteTable.SubnetAssociationNames[1]), &routetableassociation.RouteTableAssociationConfig{
 		RouteTableId: publicRouteTable.Id(),
 		SubnetId:     publicB.Id(),
 	})

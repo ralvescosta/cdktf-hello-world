@@ -11,28 +11,28 @@ import (
 func NewSubnets(cfgs *configs.Configs, tfStack cdktf.TerraformStack, fnaVpc vpc.Vpc) (
 	privateA subnet.Subnet, privateB subnet.Subnet, publicA subnet.Subnet, publicB subnet.Subnet,
 ) {
-	privateA = subnet.NewSubnet(tfStack, jsii.Sprintf("fna-private-a"), &subnet.SubnetConfig{
+	privateA = subnet.NewSubnet(tfStack, jsii.Sprintf(cfgs.PrivateSubnetA.Name), &subnet.SubnetConfig{
 		VpcId:            fnaVpc.Id(),
-		CidrBlock:        jsii.String("10.0.1.0/24"),
-		AvailabilityZone: jsii.String("us-west-1a"),
+		CidrBlock:        jsii.String(cfgs.PrivateSubnetA.CidrBlock),
+		AvailabilityZone: jsii.String(cfgs.PrivateSubnetA.AvailabilityZone),
 	})
 
-	privateB = subnet.NewSubnet(tfStack, jsii.Sprintf("fna-private-b"), &subnet.SubnetConfig{
+	privateB = subnet.NewSubnet(tfStack, jsii.Sprintf(cfgs.PrivateSubnetB.Name), &subnet.SubnetConfig{
 		VpcId:            fnaVpc.Id(),
-		CidrBlock:        jsii.Sprintf("10.0.2.0/24"),
-		AvailabilityZone: jsii.String("us-west-1c"),
+		CidrBlock:        jsii.Sprintf(cfgs.PrivateSubnetB.CidrBlock),
+		AvailabilityZone: jsii.String(cfgs.PrivateSubnetB.AvailabilityZone),
 	})
 
-	publicA = subnet.NewSubnet(tfStack, jsii.Sprintf("fna-public-a"), &subnet.SubnetConfig{
+	publicA = subnet.NewSubnet(tfStack, jsii.Sprintf(cfgs.PublicSubnetA.Name), &subnet.SubnetConfig{
 		VpcId:            fnaVpc.Id(),
-		CidrBlock:        jsii.Sprintf("10.0.3.0/24"),
-		AvailabilityZone: jsii.String("us-west-1a"),
+		CidrBlock:        jsii.Sprintf(cfgs.PublicSubnetA.CidrBlock),
+		AvailabilityZone: jsii.String(cfgs.PublicSubnetA.AvailabilityZone),
 	})
 
-	publicB = subnet.NewSubnet(tfStack, jsii.Sprintf("fna-public-b"), &subnet.SubnetConfig{
+	publicB = subnet.NewSubnet(tfStack, jsii.Sprintf(cfgs.PublicSubnetB.Name), &subnet.SubnetConfig{
 		VpcId:            fnaVpc.Id(),
-		CidrBlock:        jsii.Sprintf("10.0.4.0/24"),
-		AvailabilityZone: jsii.String("us-west-1c"),
+		CidrBlock:        jsii.Sprintf(cfgs.PublicSubnetB.CidrBlock),
+		AvailabilityZone: jsii.String(cfgs.PublicSubnetB.AvailabilityZone),
 	})
 
 	return
