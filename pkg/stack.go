@@ -11,4 +11,5 @@ func ApplyStack(cfgs *configs.Configs, tfStack cdktf.TerraformStack) {
 	privateA, privateB, publicA, publicB := network.NewSubnets(cfgs, tfStack, fnaVpc)
 	igw := network.NewInternetGateway(cfgs, tfStack, fnaVpc)
 	_, _ = network.NewRouteTables(cfgs, tfStack, fnaVpc, igw, privateA, privateB, publicA, publicB)
+	_ = network.NewApplicationLoadBalancer(cfgs, tfStack, fnaVpc, publicA, publicB)
 }
