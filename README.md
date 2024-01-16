@@ -65,8 +65,8 @@ Follow these steps to get started:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/terraform-cdk-ecs-fargate.git
-   cd terraform-cdk-ecs-fargate
+   git@github.com:ralvescosta/cdktf-hello-world.git
+   cd cdktf-hello-world
    ```
 2. Update the [configure package](./pkg/configs/configs.go) with your terraform cloud configurations.
 
