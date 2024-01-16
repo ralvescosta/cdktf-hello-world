@@ -47,6 +47,10 @@ Terraform CDK operates in two main steps:
 
 Here's an overview of the project structure:
 
+<p align="center">
+ <img src=".doc/aws-topology.jpg" alt="openapi" width=950 hight=350/> 
+</p>
+
 ## Getting Started
 
 To use this project, you'll need the following prerequisites:
