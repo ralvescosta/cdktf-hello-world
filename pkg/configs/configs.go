@@ -12,8 +12,12 @@ type Configs struct {
 
 	InternetGateway *InternetGatewayConfigs
 
-	PrivateRouteTable *RouteTableConfigs
-	PublicRouteTable  *RouteTableConfigs
+	PrivateARouteTable *RouteTableConfigs
+	PrivateBRouteTable *RouteTableConfigs
+	PublicRouteTable   *RouteTableConfigs
+
+	NatGatewayA *NatGatewayConfigs
+	NatGatewayB *NatGatewayConfigs
 }
 
 type ProviderConfigs struct {
@@ -43,6 +47,11 @@ type InternetGatewayConfigs struct {
 type RouteTableConfigs struct {
 	Name                   string
 	SubnetAssociationNames []string
+}
+
+type NatGatewayConfigs struct {
+	Name          string
+	ElasticIpName string
 }
 
 func NewConfigs() *Configs {
@@ -82,13 +91,25 @@ func NewConfigs() *Configs {
 		InternetGateway: &InternetGatewayConfigs{
 			Name: "fna-igw",
 		},
-		PrivateRouteTable: &RouteTableConfigs{
-			Name:                   "fna-private-rt",
-			SubnetAssociationNames: []string{"fna-private-rt-a", "fna-private-rt-b"},
+		PrivateARouteTable: &RouteTableConfigs{
+			Name:                   "fna-private-a-rt",
+			SubnetAssociationNames: []string{"fna-private-rt-a"},
+		},
+		PrivateBRouteTable: &RouteTableConfigs{
+			Name:                   "fna-private-b-rt",
+			SubnetAssociationNames: []string{"fna-private-rt-b"},
 		},
 		PublicRouteTable: &RouteTableConfigs{
 			Name:                   "fna-public-rt",
 			SubnetAssociationNames: []string{"fna-public-rt-a", "fna-public-rt-b"},
+		},
+		NatGatewayA: &NatGatewayConfigs{
+			Name:          "nt-gtw-a",
+			ElasticIpName: "fna-eip-a",
+		},
+		NatGatewayB: &NatGatewayConfigs{
+			Name:          "nt-gtw-b",
+			ElasticIpName: "fna-eip-b",
 		},
 	}
 }

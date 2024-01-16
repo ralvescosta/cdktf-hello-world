@@ -13,22 +13,22 @@ func NewNatGateway(cfgs *configs.Configs, tfStack cdktf.TerraformStack, publicA 
 	natGatewayA natgateway.NatGateway,
 	natGatewayB natgateway.NatGateway,
 ) {
-	natGatewayA = natgateway.NewNatGateway(tfStack, jsii.String("nt-gtw-a"), &natgateway.NatGatewayConfig{
+	natGatewayA = natgateway.NewNatGateway(tfStack, jsii.String(cfgs.NatGatewayA.Name), &natgateway.NatGatewayConfig{
 		SubnetId:         publicA.Id(),
 		ConnectivityType: jsii.String("public"),
 	})
 
-	natGatewayB = natgateway.NewNatGateway(tfStack, jsii.String("nt-gtw-b"), &natgateway.NatGatewayConfig{
+	natGatewayB = natgateway.NewNatGateway(tfStack, jsii.String(cfgs.NatGatewayB.Name), &natgateway.NatGatewayConfig{
 		SubnetId:         publicB.Id(),
 		ConnectivityType: jsii.String("public"),
 	})
 
-	eip.NewEip(tfStack, jsii.String("fna-eip-a"), &eip.EipConfig{
+	eip.NewEip(tfStack, jsii.String(cfgs.NatGatewayA.ElasticIpName), &eip.EipConfig{
 		Domain:   jsii.String("vpc"),
 		Instance: natGatewayA.Id(),
 	})
 
-	eip.NewEip(tfStack, jsii.String("fna-eip-b"), &eip.EipConfig{
+	eip.NewEip(tfStack, jsii.String(cfgs.NatGatewayB.ElasticIpName), &eip.EipConfig{
 		Domain:   jsii.String("vpc"),
 		Instance: natGatewayB.Id(),
 	})
