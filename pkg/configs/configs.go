@@ -57,12 +57,21 @@ type NatGatewayConfigs struct {
 func NewConfigs() *Configs {
 	return &Configs{
 		Provider: &ProviderConfigs{
-			AppId:                    "cdktf-hello-world",
-			Region:                   "us-west-1",
-			AccessKey:                "",
-			SecretKey:                "",
-			CloudBackendHostname:     "app.terraform.io",
-			CloudBackendOrganization: "ralvescostait",
+			// Terraform cloud Project
+			// REQUIRED
+			AppId: "cdktf-hello-world",
+			// AWS Region
+			Region: "us-west-1",
+			// AWS IAM Programmatic Access -  Access Key
+			// REQUIRED
+			AccessKey: "",
+			// AWS IAM Programmatic Access -  Secret Key
+			// REQUIRED
+			SecretKey:            "",
+			CloudBackendHostname: "app.terraform.io",
+			// Terraform Cloud Organization
+			// REQUIRED
+			CloudBackendOrganization: "",
 		},
 		Vpc: &VpcConfigs{
 			Name:      "fna-vpc",
