@@ -18,9 +18,8 @@ func NewApplicationLoadBalancer(
 	fnaVpc vpc.Vpc,
 	publicA subnet.Subnet,
 	publicB subnet.Subnet,
-) (appLoadBalancer alb.Alb) {
-
-	albSecurityGroup := securitygroup.NewSecurityGroup(tfStack, jsii.String("fna-alb-sg"), &securitygroup.SecurityGroupConfig{
+) (albSecurityGroup securitygroup.SecurityGroup, targetGroup albtargetgroup.AlbTargetGroup, appLoadBalancer alb.Alb) {
+	albSecurityGroup = securitygroup.NewSecurityGroup(tfStack, jsii.String("fna-alb-sg"), &securitygroup.SecurityGroupConfig{
 		Description: jsii.String("Allows access from internet"),
 		VpcId:       fnaVpc.Id(),
 		Ingress: []*securitygroup.SecurityGroupIngress{
@@ -57,7 +56,7 @@ func NewApplicationLoadBalancer(
 		SecurityGroups: &[]*string{albSecurityGroup.Id()},
 	})
 
-	targetGroup := albtargetgroup.NewAlbTargetGroup(tfStack, jsii.String("fna-alb-tg"), &albtargetgroup.AlbTargetGroupConfig{
+	targetGroup = albtargetgroup.NewAlbTargetGroup(tfStack, jsii.String("fna-alb-tg"), &albtargetgroup.AlbTargetGroupConfig{
 		VpcId:           fnaVpc.Id(),
 		TargetType:      jsii.String("ip"),
 		Protocol:        jsii.String("HTTP"),
@@ -65,7 +64,7 @@ func NewApplicationLoadBalancer(
 		Port:            jsii.Number(80),
 		HealthCheck: &albtargetgroup.AlbTargetGroupHealthCheck{
 			Enabled: true,
-			Path:    jsii.String("/"),
+			Path:    jsii.String("/health"),
 			Port:    jsii.String("80"),
 		},
 	})
