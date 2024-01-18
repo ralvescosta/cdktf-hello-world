@@ -9,7 +9,6 @@ func main() {
 	cfgs := configs.NewConfigs()
 
 	appScope, tfScope := pkg.NewAWSScopeProvider(cfgs)
-
 	pkg.ApplyStack(cfgs, tfScope)
 
 	appScope.Synth()

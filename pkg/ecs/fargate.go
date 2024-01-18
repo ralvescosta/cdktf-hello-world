@@ -80,7 +80,7 @@ func NewECSFargate(
 			Type: jsii.String("ECS"),
 		},
 		NetworkConfiguration: &ecsservice.EcsServiceNetworkConfiguration{
-			Subnets:        &[]*string{privateA.Id(), privateA.Id()},
+			Subnets:        &[]*string{privateA.Id(), privateB.Id()},
 			SecurityGroups: &[]*string{secGroup.Id()},
 		},
 		LoadBalancer: &[]*ecsservice.EcsServiceLoadBalancer{
