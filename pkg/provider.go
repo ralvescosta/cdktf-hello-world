@@ -1,27 +1,41 @@
 package pkg
 
 import (
-	"cdk.tf/go/stack/pkg/configs"
+	"context"
+
+	awsCredentialsConfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/jsii-runtime-go"
-	awsprovider "github.com/cdktf/cdktf-provider-aws-go/aws/v18/provider"
+	awsProvider "github.com/cdktf/cdktf-provider-aws-go/aws/v18/provider"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/ralvescosta/cdktf-hello-world/pkg/configs"
+	"go.uber.org/zap"
 )
 
-func NewAWSScopeProvider(cfgs *configs.Configs) (cdktf.App, cdktf.TerraformStack) {
+func NewAWSScopeProvider(logger *zap.SugaredLogger, cfgs *configs.Configs) (cdktf.App, cdktf.TerraformStack) {
 	appScope := cdktf.NewApp(nil)
+	tfScope := cdktf.NewTerraformStack(appScope, jsii.String(cfgs.AppName))
 
-	tfScope := cdktf.NewTerraformStack(appScope, jsii.String(cfgs.Provider.AppId))
+	ctx := context.Background()
+	awsConfigs, err := awsCredentialsConfig.LoadDefaultConfig(ctx)
+	if err != nil {
+		logger.Fatal(err)
+	}
 
-	awsprovider.NewAwsProvider(tfScope, jsii.String("AWS"), &awsprovider.AwsProviderConfig{
-		Region:    jsii.String(cfgs.Provider.Region),
-		AccessKey: jsii.String(cfgs.Provider.AccessKey),
-		SecretKey: jsii.String(cfgs.Provider.SecretKey),
+	awsCredentials, err := awsConfigs.Credentials.Retrieve(ctx)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	awsProvider.NewAwsProvider(tfScope, jsii.String("AWS"), &awsProvider.AwsProviderConfig{
+		Region:    jsii.String(cfgs.Region),
+		AccessKey: jsii.String(awsCredentials.AccessKeyID),
+		SecretKey: jsii.String(awsCredentials.SecretAccessKey),
 	})
 
 	cdktf.NewCloudBackend(tfScope, &cdktf.CloudBackendConfig{
-		Hostname:     jsii.String(cfgs.Provider.CloudBackendHostname),
-		Organization: jsii.String(cfgs.Provider.CloudBackendOrganization),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String(cfgs.Provider.AppId)),
+		Hostname:     jsii.String(cfgs.TerraformCloudHostname),
+		Organization: jsii.String(cfgs.TerraformCloudOrganization),
+		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String(cfgs.AppName)),
 	})
 
 	return appScope, tfScope
