@@ -1,80 +1,80 @@
 package network
 
 import (
-	"cdk.tf/go/stack/pkg/configs"
+	"fmt"
+
 	"github.com/aws/jsii-runtime-go"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/internetgateway"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/natgateway"
 	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/routetable"
 	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/routetableassociation"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/subnet"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/vpc"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/ralvescosta/cdktf-hello-world/pkg/stack"
 )
 
-func NewRouteTables(
-	cfgs *configs.Configs,
-	tfStack cdktf.TerraformStack,
-	fnaVpc vpc.Vpc,
-	igw internetgateway.InternetGateway,
-	privateA subnet.Subnet,
-	privateB subnet.Subnet,
-	publicA subnet.Subnet,
-	publicB subnet.Subnet,
-	natGtwA natgateway.NatGateway,
-	natGtwB natgateway.NatGateway,
-) (
-	privateARouteTable routetable.RouteTable,
-	privateBRouteTable routetable.RouteTable,
-	publicRouteTable routetable.RouteTable,
-) {
-	privateARouteTable = routetable.NewRouteTable(tfStack, jsii.String(cfgs.PrivateARouteTable.Name), &routetable.RouteTableConfig{
-		VpcId: fnaVpc.Id(),
+func NewRouteTables(stack *stack.MyStack) {
+	privateRouteTableAName := fmt.Sprintf("%v-private-rt-a", stack.Cfgs.AppName)
+	stack.RouteTables.PrivateA = routetable.NewRouteTable(stack.TfStack, jsii.String(privateRouteTableAName), &routetable.RouteTableConfig{
+		VpcId: stack.Vpc.Id(),
 		Route: []*routetable.RouteTableRoute{
 			{
 				CidrBlock: jsii.String("0.0.0.0/0"),
-				GatewayId: natGtwA.Id(),
+				GatewayId: stack.NatGateways.PrivateA.Id(),
 			},
 		},
 	})
 
-	privateBRouteTable = routetable.NewRouteTable(tfStack, jsii.String(cfgs.PrivateBRouteTable.Name), &routetable.RouteTableConfig{
-		VpcId: fnaVpc.Id(),
+	privateRouteTableBName := fmt.Sprintf("%v-private-rt-b", stack.Cfgs.AppName)
+	stack.RouteTables.PrivateB = routetable.NewRouteTable(stack.TfStack, jsii.String(privateRouteTableBName), &routetable.RouteTableConfig{
+		VpcId: stack.Vpc.Id(),
 		Route: []*routetable.RouteTableRoute{
 			{
 				CidrBlock: jsii.String("0.0.0.0/0"),
-				GatewayId: natGtwB.Id(),
+				GatewayId: stack.NatGateways.PrivateB.Id(),
 			},
 		},
 	})
 
-	publicRouteTable = routetable.NewRouteTable(tfStack, jsii.String(cfgs.PublicRouteTable.Name), &routetable.RouteTableConfig{
-		VpcId: fnaVpc.Id(),
+	publicRouteTableAName := fmt.Sprintf("%v-public-rt-a", stack.Cfgs.AppName)
+	stack.RouteTables.PublicA = routetable.NewRouteTable(stack.TfStack, jsii.String(publicRouteTableAName), &routetable.RouteTableConfig{
+		VpcId: stack.Vpc.Id(),
 		Route: []*routetable.RouteTableRoute{
 			{
 				CidrBlock: jsii.String("0.0.0.0/0"),
-				GatewayId: igw.Id(),
+				GatewayId: stack.InternetGateway.Id(),
 			},
 		},
 	})
 
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PrivateARouteTable.SubnetAssociationNames[0]), &routetableassociation.RouteTableAssociationConfig{
-		RouteTableId: privateARouteTable.Id(),
-		SubnetId:     privateA.Id(),
-	})
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PrivateBRouteTable.SubnetAssociationNames[0]), &routetableassociation.RouteTableAssociationConfig{
-		RouteTableId: privateBRouteTable.Id(),
-		SubnetId:     privateB.Id(),
-	})
-
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PublicRouteTable.SubnetAssociationNames[0]), &routetableassociation.RouteTableAssociationConfig{
-		RouteTableId: publicRouteTable.Id(),
-		SubnetId:     publicA.Id(),
-	})
-	routetableassociation.NewRouteTableAssociation(tfStack, jsii.String(cfgs.PublicRouteTable.SubnetAssociationNames[1]), &routetableassociation.RouteTableAssociationConfig{
-		RouteTableId: publicRouteTable.Id(),
-		SubnetId:     publicB.Id(),
+	publicRouteTableBName := fmt.Sprintf("%v-public-rt-b", stack.Cfgs.AppName)
+	stack.RouteTables.PublicB = routetable.NewRouteTable(stack.TfStack, jsii.String(publicRouteTableBName), &routetable.RouteTableConfig{
+		VpcId: stack.Vpc.Id(),
+		Route: []*routetable.RouteTableRoute{
+			{
+				CidrBlock: jsii.String("0.0.0.0/0"),
+				GatewayId: stack.InternetGateway.Id(),
+			},
+		},
 	})
 
-	return
+	privateRouteTableAssociationAName := fmt.Sprintf("%v-private-a-rta", stack.Cfgs.AppName)
+	routetableassociation.NewRouteTableAssociation(stack.TfStack, jsii.String(privateRouteTableAssociationAName), &routetableassociation.RouteTableAssociationConfig{
+		RouteTableId: stack.RouteTables.PrivateA.Id(),
+		SubnetId:     stack.Subnets.PrivateA.Id(),
+	})
+
+	privateRouteTableAssociationBName := fmt.Sprintf("%v-private-b-rta", stack.Cfgs.AppName)
+	routetableassociation.NewRouteTableAssociation(stack.TfStack, jsii.String(privateRouteTableAssociationBName), &routetableassociation.RouteTableAssociationConfig{
+		RouteTableId: stack.RouteTables.PrivateB.Id(),
+		SubnetId:     stack.Subnets.PrivateB.Id(),
+	})
+
+	publicRouteTableAssociationAName := fmt.Sprintf("%v-public-a-rta", stack.Cfgs.AppName)
+	routetableassociation.NewRouteTableAssociation(stack.TfStack, jsii.String(publicRouteTableAssociationAName), &routetableassociation.RouteTableAssociationConfig{
+		RouteTableId: stack.RouteTables.PublicA.Id(),
+		SubnetId:     stack.Subnets.PublicA.Id(),
+	})
+
+	publicRouteTableAssociationBName := fmt.Sprintf("%v-public-b-rta", stack.Cfgs.AppName)
+	routetableassociation.NewRouteTableAssociation(stack.TfStack, jsii.String(publicRouteTableAssociationBName), &routetableassociation.RouteTableAssociationConfig{
+		RouteTableId: stack.RouteTables.PublicB.Id(),
+		SubnetId:     stack.Subnets.PublicB.Id(),
+	})
 }

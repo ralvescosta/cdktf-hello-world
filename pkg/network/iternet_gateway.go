@@ -1,17 +1,16 @@
 package network
 
 import (
-	"cdk.tf/go/stack/pkg/configs"
+	"fmt"
+
 	"github.com/aws/jsii-runtime-go"
 	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/internetgateway"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/vpc"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/ralvescosta/cdktf-hello-world/pkg/stack"
 )
 
-func NewInternetGateway(cfgs *configs.Configs, tfStack cdktf.TerraformStack, fnaVpc vpc.Vpc) (igw internetgateway.InternetGateway) {
-	igw = internetgateway.NewInternetGateway(tfStack, jsii.String(cfgs.InternetGateway.Name), &internetgateway.InternetGatewayConfig{
-		VpcId: fnaVpc.Id(),
+func NewInternetGateway(stack *stack.MyStack) {
+	internetGatewayName := fmt.Sprintf("%v-igw", stack.Cfgs.AppName)
+	stack.InternetGateway = internetgateway.NewInternetGateway(stack.TfStack, jsii.String(internetGatewayName), &internetgateway.InternetGatewayConfig{
+		VpcId: stack.Vpc.Id(),
 	})
-
-	return
 }

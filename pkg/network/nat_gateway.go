@@ -1,36 +1,39 @@
 package network
 
 import (
-	"cdk.tf/go/stack/pkg/configs"
+	"fmt"
+
 	"github.com/aws/jsii-runtime-go"
 	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/eip"
 	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/natgateway"
-	"github.com/cdktf/cdktf-provider-aws-go/aws/v18/subnet"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/ralvescosta/cdktf-hello-world/pkg/stack"
 )
 
-func NewNatGateway(cfgs *configs.Configs, tfStack cdktf.TerraformStack, publicA subnet.Subnet, publicB subnet.Subnet) (
-	natGatewayA natgateway.NatGateway,
-	natGatewayB natgateway.NatGateway,
-) {
-	natGatewayA = natgateway.NewNatGateway(tfStack, jsii.String(cfgs.NatGatewayA.Name), &natgateway.NatGatewayConfig{
-		SubnetId:         publicA.Id(),
+func NewNatGateway(stack *stack.MyStack) {
+	eipAName := fmt.Sprintf("%v-nat-g-eip-a", stack.Cfgs.AppName)
+	stack.NatGateways.EIpA = eip.NewEip(stack.TfStack, jsii.String(eipAName), &eip.EipConfig{
+		Domain: jsii.String("vpc"),
+		// Instance: stack.NatGateway.Id(),
+	})
+
+	natGatewayAName := fmt.Sprintf("%v-nat-g-a", stack.Cfgs.AppName)
+	stack.NatGateways.PrivateA = natgateway.NewNatGateway(stack.TfStack, jsii.String(natGatewayAName), &natgateway.NatGatewayConfig{
+		SubnetId:         stack.Subnets.PublicA.Id(),
 		ConnectivityType: jsii.String("public"),
+		AllocationId:     stack.NatGateways.EIpA.Id(),
 	})
 
-	natGatewayB = natgateway.NewNatGateway(tfStack, jsii.String(cfgs.NatGatewayB.Name), &natgateway.NatGatewayConfig{
-		SubnetId:         publicB.Id(),
+	eipBName := fmt.Sprintf("%v-nat-g-eip-b", stack.Cfgs.AppName)
+	stack.NatGateways.EIpB = eip.NewEip(stack.TfStack, jsii.String(eipBName), &eip.EipConfig{
+		Domain: jsii.String("vpc"),
+		// Instance: stack.NatGateway.Id(),
+	})
+
+	natGatewayBName := fmt.Sprintf("%v-nat-g-b", stack.Cfgs.AppName)
+	stack.NatGateways.PrivateB = natgateway.NewNatGateway(stack.TfStack, jsii.String(natGatewayBName), &natgateway.NatGatewayConfig{
+		SubnetId:         stack.Subnets.PublicB.Id(),
 		ConnectivityType: jsii.String("public"),
-	})
-
-	eip.NewEip(tfStack, jsii.String(cfgs.NatGatewayA.ElasticIpName), &eip.EipConfig{
-		Domain:   jsii.String("vpc"),
-		Instance: natGatewayA.Id(),
-	})
-
-	eip.NewEip(tfStack, jsii.String(cfgs.NatGatewayB.ElasticIpName), &eip.EipConfig{
-		Domain:   jsii.String("vpc"),
-		Instance: natGatewayB.Id(),
+		AllocationId:     stack.NatGateways.EIpB.Id(),
 	})
 
 	return
