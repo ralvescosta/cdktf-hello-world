@@ -1,15 +1,15 @@
 package main
 
 import (
-	"cdk.tf/go/stack/pkg"
-	"cdk.tf/go/stack/pkg/configs"
+	"github.com/ralvescosta/cdktf-hello-world/pkg"
+	"github.com/ralvescosta/cdktf-hello-world/pkg/configs"
 )
 
 func main() {
-	cfgs := configs.NewConfigs()
+	cfgs, logger := configs.NewConfigs()
 
-	appScope, tfScope := pkg.NewAWSScopeProvider(cfgs)
-	pkg.ApplyStack(cfgs, tfScope)
+	appScope, tfScope := pkg.NewAWSScopeProvider(logger, cfgs)
+	pkg.ApplyStack(logger, cfgs, tfScope)
 
 	appScope.Synth()
 }
